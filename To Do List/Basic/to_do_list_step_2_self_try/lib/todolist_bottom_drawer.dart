@@ -9,12 +9,12 @@ class ToDoListApp extends StatefulWidget {
 }
 
 class Card {
-  final String? titleName;
-  final String? description;
-  final Color? color;
-  final String? date;
+  String? titleName;
+  String? description;
+  Color? color;
+  String? date;
 
-  const Card({this.titleName, this.description, this.color, this.date});
+  Card({this.titleName, this.description, this.color, this.date});
 }
 
 class _ToDoListAppState extends State {
@@ -25,77 +25,28 @@ class _ToDoListAppState extends State {
     Color.fromRGBO(250, 232, 250, 1),
     Color.fromRGBO(250, 232, 232, 1),
   ];
+  
   int tempIndex = 0;
   List card = [
-    const Card(
-      titleName: "Lorem Ipsum is simply setting industry",
+    Card(
+      titleName: "Troubleshoot System Integration",
       description:
-          "Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      color: Color.fromRGBO(250, 232, 232, 1),
-      date: "2 July 2023",
+          "Identify and troubleshoot integration issues between hardware and software components of the system. Work with cross-functional teams to resolve compatibility issues.",
+      color: const Color.fromRGBO(250, 232, 232, 1),
+      date: "20/3/2024",
     ),
-    const Card(
-      titleName: "Lorem Ipsum is simply setting industry",
+    Card(
+      titleName: "Update Technical Documentation",
       description:
-          "Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      color: Color.fromRGBO(232, 237, 250, 1),
-      date: "2 July 2023",
-    ),
-    const Card(
-      titleName: "Lorem Ipsum is simply setting industry",
-      description:
-          "Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      color: Color.fromRGBO(250, 249, 232, 1),
-      date: "2 July 2023",
-    ),
-    const Card(
-      titleName: "Lorem Ipsum is simply setting industry",
-      description:
-          "Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      color: Color.fromRGBO(250, 232, 250, 1),
-      date: "2 July 2023",
-    ),
-    const Card(
-      titleName: "Lorem Ipsum is simply setting industry",
-      description:
-          "Simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-      color: Color.fromRGBO(250, 232, 232, 1),
-      date: "2 July 2023",
+          "Update technical documentation including design documents, specifications, and user manuals to reflect the latest changes and improvements in the project.",
+      color: const Color.fromRGBO(232, 237, 250, 1),
+      date: "20/3/2024",
     ),
   ];
 
   TextEditingController title = TextEditingController();
   TextEditingController description = TextEditingController();
   TextEditingController date = TextEditingController();
-/*
-  Widget _textField(String? label) {
-    return SizedBox(
-      // height: 120,
-      width: 380,
-      child: TextField(
-        maxLines: null,
-        //key: Key("Name"),
-        decoration: InputDecoration(
-          labelText: label,
-          hintText: label,
-          enabledBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              width: 2,
-              color: Color.fromRGBO(0, 139, 148, 1),
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
-              width: 2,
-              color: Color.fromRGBO(2, 167, 177, 1),
-            ),
-            borderRadius: BorderRadius.all(Radius.circular(10)),
-          ),
-        ),
-      ),
-    );
-  }*/
 
   Row _textFieldName(String name) {
     return Row(
@@ -113,23 +64,31 @@ class _ToDoListAppState extends State {
     );
   }
 
-  void _bottomSheet() {
+  void _bottomSheet(bool isEdit, [int index = -1]) {
+    Card cardObj = Card();
+    if (isEdit) {
+      cardObj = card[index];
+      title.text = cardObj.titleName!;
+      description.text = cardObj.description!;
+      date.text = cardObj.date!;
+    }
     showModalBottomSheet(
-        useSafeArea: true,
+        //useSafeArea: true,
         context: context,
         //scrollControlDisabledMaxHeightRatio: 1.2,
         isScrollControlled: true,
         //showDragHandle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
-        ),
+        // shape: const RoundedRectangleBorder(
+        //   borderRadius: BorderRadius.vertical(top: Radius.circular(50.0)),
+        // ),
         builder: (BuildContext context) {
           return SingleChildScrollView(
-            child: Container(
-              padding: const EdgeInsets.only(
-                  top: 10, left: 15, right: 15, bottom: 20),
-              height: 450,
-              width: double.infinity,
+            child: Padding(
+              padding: EdgeInsets.only(
+                  top: 10,
+                  left: 15,
+                  right: 15,
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -150,6 +109,7 @@ class _ToDoListAppState extends State {
                   ),
                   _textFieldName("Title"),
                   // _textField("Enter Title"),
+                  
                   SizedBox(
                     // height: 120,
                     width: 380,
@@ -263,22 +223,31 @@ class _ToDoListAppState extends State {
                         backgroundColor: const Color.fromRGBO(2, 167, 177, 1),
                       ),
                       onPressed: () {
-                        setState(() {
-                          card.add(Card(
-                            titleName: title.text,
-                            description: description.text,
-                            date: date.text,
-                            color: colors[tempIndex++],
-                          ));
-                          if (tempIndex == colors.length) {
-                            tempIndex = 0;
-                          }
-                          title.clear();
-                          description.clear();
-                          date.clear();
+                        if (isEdit) {
+                          setState(() {
+                            cardObj.titleName = title.text;
+                            cardObj.description = description.text;
+                            cardObj.date = date.text;
+                          });
+                        } else {
+                          setState(() {
+                            card.add(Card(
+                              titleName: title.text,
+                              description: description.text,
+                              date: date.text,
+                              color: colors[tempIndex++],
+                            ));
+                            if (tempIndex == colors.length) {
+                              tempIndex = 0;
+                            }
+                          });
+                        }
 
-                          Navigator.pop(context);
-                        });
+                        title.clear();
+                        description.clear();
+                        date.clear();
+
+                        Navigator.pop(context);
                       },
                       child: Text(
                         "Submit",
@@ -292,6 +261,9 @@ class _ToDoListAppState extends State {
                       ),
                     ),
                   ),
+                  const SizedBox(
+                    height: 15,
+                  ),
                 ],
               ),
             ),
@@ -303,7 +275,9 @@ class _ToDoListAppState extends State {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: _bottomSheet,
+        onPressed: () {
+          _bottomSheet(false);
+        },
         shape: const CircleBorder(),
         backgroundColor: const Color.fromRGBO(2, 167, 177, 1),
         child: const Icon(
@@ -338,6 +312,7 @@ class _ToDoListAppState extends State {
               borderRadius: BorderRadius.circular(15),
               color: card[index].color,
               boxShadow: const [
+                
                 BoxShadow(
                   color: Colors.grey,
                   offset: Offset(0, 10),
@@ -434,7 +409,9 @@ class _ToDoListAppState extends State {
                     ),
                     const Spacer(),
                     IconButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        _bottomSheet(true, index);
+                      },
                       icon: const Icon(
                         size: 20,
                         Icons.edit_outlined,
